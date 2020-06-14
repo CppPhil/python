@@ -351,3 +351,7 @@ $RECYCLE.BIN/
 *.lnk
 
 # End of https://www.toptal.com/developers/gitignore/api/linux,windows,python,pycharm+all,vim,emacs,notepadpp,jupyternotebooks
+
+# training checkpoints
+rnn_play_generator/training_checkpoints
+
