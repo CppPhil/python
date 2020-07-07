@@ -91,6 +91,15 @@ if __name__ == "__main__":
     # TODO: FUBAR'D FUBAR'D FUBAR'D FUBAR'D FUBAR'D FUBAR'D
     # TODO: Hardware timestamp is not unique as it wraps around.
 
+    # Have time axis <-
+    #           sensor 1: If there's a channel1 value for the time: SHOW IT
+    #           sensor 2: If there's a channel1 value for the time: SHOW IT
+    #           sensor 3: If there's a channel1 value for the time: SHOW IT
+    #           sensor 4: If there's a channel1 value for the time: SHOW IT
+
+    # List of the time
+    # sensor1list: has REAL entry if there's something, otherwise previous entry
+
     uniqueHardwareTimestamps = list(dict.fromkeys(hardwareTimestamp))
     channel1RightArmSensor = []
     channel1BellySensor = []
