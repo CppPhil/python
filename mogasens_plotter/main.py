@@ -22,22 +22,22 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 
-def sensor_to_string(sensorId):
+def sensor_to_string(sensor_id):
     right_arm_sensor_id = 769
     belly_sensor_id = 770
     chest_sensor_id = 771
     left_arm_sensor_id = 772
 
-    if sensorId == right_arm_sensor_id:
+    if sensor_id == right_arm_sensor_id:
         return "right arm sensor"
-    elif sensorId == belly_sensor_id:
+    elif sensor_id == belly_sensor_id:
         return "belly sensor"
-    elif sensorId == chest_sensor_id:
+    elif sensor_id == chest_sensor_id:
         return "chest sensor"
-    elif sensorId == left_arm_sensor_id:
+    elif sensor_id == left_arm_sensor_id:
         return "left arm sensor"
     else:
-        return f"bogus sensor, id: {sensorId}"
+        return f"bogus sensor, id: {sensor_id}"
 
 
 def channel_to_string(channel):
@@ -69,66 +69,64 @@ if __name__ == "__main__":
     desired_sensor = args.sensor
     desired_channel = args.channel
 
-    timeColumnIndex = 0
-    hardwareTimestampColumnIndex = 1
-    extractIdColumnIndex = 2
+    time_column_index = 0
+    # We don't care about the hardware timestamp.
+    extract_id_column_index = 2
     # We don't care about the trigger (it's always 0).
-    accelerometerXColumnIndex = 4
-    accelerometerYColumnIndex = 5
-    accelerometerZColumnIndex = 6
-    gyroscopeXColumnIndex = 7
-    gyroscopeYColumnIndex = 8
-    gyroscopeZColumnIndex = 9
+    accelerometer_x_column_index = 4
+    accelerometer_y_column_index = 5
+    accelerometer_z_column_index = 6
+    gyroscope_x_column_index = 7
+    gyroscope_y_column_index = 8
+    gyroscope_z_column_index = 9
 
     time = []
-    hardwareTimestamp = []
-    extractId = []
-    accelerometerX = []
-    accelerometerY = []
-    accelerometerZ = []
-    gyroscopeX = []
-    gyroscopeY = []
-    gyroscopeZ = []
+    extract_id = []
+    accelerometer_x = []
+    accelerometer_y = []
+    accelerometer_z = []
+    gyroscope_x = []
+    gyroscope_y = []
+    gyroscope_z = []
 
     with open(csv_file_path, 'r') as csv_file:
         plots = csv.reader(csv_file, delimiter=',')
-        for rowCount, row in enumerate(plots):
-            if rowCount == 0:  # Skip the header row
+        for row_count, row in enumerate(plots):
+            if row_count == 0:  # Skip the header row
                 continue
 
-            time.append(float(row[timeColumnIndex]))
-            hardwareTimestamp.append(int(row[hardwareTimestampColumnIndex]))
-            extractId.append(int(row[extractIdColumnIndex]))
-            accelerometerX.append(float(row[accelerometerXColumnIndex]))
-            accelerometerY.append(float(row[accelerometerYColumnIndex]))
-            accelerometerZ.append(float(row[accelerometerZColumnIndex]))
-            gyroscopeX.append(float(row[gyroscopeXColumnIndex]))
-            gyroscopeY.append(float(row[gyroscopeYColumnIndex]))
-            gyroscopeZ.append(float(row[gyroscopeZColumnIndex]))
+            time.append(float(row[time_column_index]))
+            extract_id.append(int(row[extract_id_column_index]))
+            accelerometer_x.append(float(row[accelerometer_x_column_index]))
+            accelerometer_y.append(float(row[accelerometer_y_column_index]))
+            accelerometer_z.append(float(row[accelerometer_z_column_index]))
+            gyroscope_x.append(float(row[gyroscope_x_column_index]))
+            gyroscope_y.append(float(row[gyroscope_y_column_index]))
+            gyroscope_z.append(float(row[gyroscope_z_column_index]))
 
-    timeData = []
-    channelData = []
+    time_data = []
+    channel_data = []
 
     for i in range(len(time)):
-        currentSensorId = extractId[i]
+        current_sensor_id = extract_id[i]
 
-        if currentSensorId == desired_sensor:
-            timeData.append(time[i])
+        if current_sensor_id == desired_sensor:
+            time_data.append(time[i])
 
             if desired_channel == 1:
-                channelData.append(accelerometerX[i])
+                channel_data.append(accelerometer_x[i])
             elif desired_channel == 2:
-                channelData.append(accelerometerY[i])
+                channel_data.append(accelerometer_y[i])
             elif desired_channel == 3:
-                channelData.append(accelerometerZ[i])
+                channel_data.append(accelerometer_z[i])
             elif desired_channel == 4:
-                channelData.append(gyroscopeX[i])
+                channel_data.append(gyroscope_x[i])
             elif desired_channel == 5:
-                channelData.append(gyroscopeY[i])
+                channel_data.append(gyroscope_y[i])
             elif desired_channel == 6:
-                channelData.append(gyroscopeZ[i])
+                channel_data.append(gyroscope_z[i])
 
-    df = pd.DataFrame({'time': timeData, 'channel': channelData})
+    df = pd.DataFrame({'time': time_data, 'channel': channel_data})
 
     plt.plot('time', 'channel', data=df, color='skyblue')
     plt.title(csv_file_path)
