@@ -8,12 +8,12 @@
 # 772 = left arm
 
 # Channels
-#  1 = accelerometer X                                                                                       
-#  2 = accelerometer Y                                                                                       
-#  3 = accelerometer Z                                                                                       
-#  4 = gyroscope X                                                                                           
-#  5 = gyroscope Y                                                                                           
-#  6 = gyroscope Z   
+# 1 = accelerometer X                                                                                       
+# 2 = accelerometer Y                                                                                       
+# 3 = accelerometer Z                                                                                       
+# 4 = gyroscope X                                                                                           
+# 5 = gyroscope Y                                                                                           
+# 6 = gyroscope Z   
 
 import argparse
 import csv
