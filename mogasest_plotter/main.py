@@ -1,6 +1,7 @@
-import matplotlib.pyplot as plt
+import argparse
 import csv
-import sys
+
+import matplotlib.pyplot as plt
 import pandas as pd
 
 
@@ -40,19 +41,16 @@ def channel_to_string(channel):
 
 
 if __name__ == "__main__":
-    argc = len(sys.argv)
-    expectedArgumentCount = 2
+    parser = argparse.ArgumentParser(description='Plot MoGaSens CSV file.')
+    parser.add_argument('csv_file_path', type=str, help='Path to the CSV file to plot.')
+    parser.add_argument('sensor', type=int, help='The sensor to plot.')
+    parser.add_argument('channel', type=int, help='The channel to plot.')
 
-    if argc != expectedArgumentCount:
-        print(f"Too few command line arguments provided: {argc - 1}, expected {expectedArgumentCount - 1}")
-        exit(-1)
+    args = parser.parse_args()
 
-    csv_file_path_index = 1
-    csv_file_path = sys.argv[csv_file_path_index]
-
-    # TODO: Read these from the command line somehow
-    desired_sensor = 769
-    desired_channel = 1
+    csv_file_path = args.csv_file_path
+    desired_sensor = args.sensor
+    desired_channel = args.channel
 
     timeColumnIndex = 0
     hardwareTimestampColumnIndex = 1
