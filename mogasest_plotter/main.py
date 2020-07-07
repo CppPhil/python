@@ -22,6 +22,10 @@ if __name__ == "__main__":
     csv_file_path_index = 1
     csv_file_path = sys.argv[csv_file_path_index]
 
+    # TODO: Read these from the command line somehow
+    desired_sensor = 769
+    desired_channel = 1
+
     timeColumnIndex = 0
     hardwareTimestampColumnIndex = 1
     extractIdColumnIndex = 2
@@ -64,55 +68,32 @@ if __name__ == "__main__":
     chestSensorId = 771
     leftArmSensorId = 772
 
-    # Have time axis <-
-    #           sensor 1: If there's a channel1 value for the time: SHOW IT
-    #           sensor 2: If there's a channel1 value for the time: SHOW IT
-    #           sensor 3: If there's a channel1 value for the time: SHOW IT
-    #           sensor 4: If there's a channel1 value for the time: SHOW IT
-
-    # List of the time
-    # sensor1list: has REAL entry if there's something, otherwise previous entry
-
-    channel1RightArmSensor = []
-    channel1BellySensor = []
-    channel1ChestSensor = []
-    channel1LeftArmSensor = []
+    timeData = []
+    channelData = []
 
     for i in range(len(time)):
         currentSensorId = extractId[i]
 
-        if currentSensorId == rightArmSensorId:
-            channel1RightArmSensor.append(accelerometerX[i])
-            append_previous(channel1BellySensor, i)
-            append_previous(channel1ChestSensor, i)
-            append_previous(channel1LeftArmSensor, i)
-        elif currentSensorId == bellySensorId:
-            append_previous(channel1RightArmSensor, i)
-            channel1BellySensor.append(accelerometerX[i])
-            append_previous(channel1ChestSensor, i)
-            append_previous(channel1LeftArmSensor, i)
-        elif currentSensorId == chestSensorId:
-            append_previous(channel1RightArmSensor, i)
-            append_previous(channel1BellySensor, i)
-            channel1ChestSensor.append(accelerometerX[i])
-            append_previous(channel1LeftArmSensor, i)
-        elif currentSensorId == leftArmSensorId:
-            append_previous(channel1RightArmSensor, i)
-            append_previous(channel1BellySensor, i)
-            append_previous(channel1ChestSensor, i)
-            channel1LeftArmSensor.append(accelerometerX[i])
+        if currentSensorId == desired_sensor:
+            timeData.append(time[i])
 
-    df = pd.DataFrame({'time': time, 'channel1_right_arm': channel1RightArmSensor,
-                       'channel1_belly': channel1BellySensor, 'channel1_chest': channel1ChestSensor,
-                       'channel1_left_arm': channel1LeftArmSensor})
+            if desired_channel == 1:
+                channelData.append(accelerometerX[i])
+            elif desired_channel == 2:
+                channelData.append(accelerometerY[i])
+            elif desired_channel == 3:
+                channelData.append(accelerometerZ[i])
+            elif desired_channel == 4:
+                channelData.append(gyroscopeX[i])
+            elif desired_channel == 5:
+                channelData.append(gyroscopeY[i])
+            elif desired_channel == 6:
+                channelData.append(gyroscopeZ[i])
 
-    plt.plot('time', 'channel1_right_arm', data=df, color='skyblue')
-    # plt.plot('time', 'channel1_belly', data=df, color='olive')
-    # plt.plot('time', 'channel1_chest', data=df, color='red')
-    # plt.plot('time', 'channel1_left_arm', data=df, color='orange')
+    df = pd.DataFrame({'time': timeData, 'channel': channelData})
 
+    plt.plot('time', 'channel', data=df, color='skyblue')
     plt.title(csv_file_path)
-    plt.ylabel('channel1 right arm')
+    plt.ylabel(f'channel{desired_channel} {desired_sensor}')  # TODO: Make the printing of this prettier
     plt.xlabel('time')
-
     plt.show()
