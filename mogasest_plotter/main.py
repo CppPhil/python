@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import csv
 import sys
+import pandas as pd
 
 if __name__ == "__main__":
     argc = len(sys.argv)
@@ -46,22 +47,49 @@ if __name__ == "__main__":
             accelerometerX.append(float(row[accelerometerXColumnIndex]))
             accelerometerY.append(float(row[accelerometerYColumnIndex]))
             accelerometerZ.append(float(row[accelerometerZColumnIndex]))
+            gyroscopeX.append(float(row[gyroscopeXColumnIndex]))
+            gyroscopeY.append(float(row[gyroscopeYColumnIndex]))
+            gyroscopeZ.append(float(row[gyroscopeZColumnIndex]))
 
-            # Read gyroscope data if there's some, otherwise just use 0.0.
-            hasGyroscopeIndexThreshold = 7
+    # plt.plot(time, hardwareTimestamp, extractId, accelerometerX, accelerometerY, accelerometerZ, gyroscopeX,
+    # gyroscopeY, gyroscopeZ, marker='o')
 
-            if len(row) > hasGyroscopeIndexThreshold:
-                gyroscopeX.append(float(row[gyroscopeXColumnIndex]))
-                gyroscopeY.append(float(row[gyroscopeYColumnIndex]))
-                gyroscopeZ.append(float(row[gyroscopeZColumnIndex]))
-            else:
-                gyroscopeX.append(0.0)
-                gyroscopeY.append(0.0)
-                gyroscopeZ.append(0.0)
+    # plt.plot(hardwareTimestamp, extractId, accelerometerX, marker='o')
 
-    plt.plot(time, hardwareTimestamp, extractId, accelerometerX, accelerometerY, accelerometerZ, gyroscopeX, gyroscopeY,
-             gyroscopeZ, marker='o')
+    rightArmSensorId = 769
+    bellySensorId = 770
+    chestSensorId = 771
+    leftArmSensorId = 772
+
+    #  df = pd.DataFrame({''})
+
+    # map than maps HWTimestamp to
+    #      maps that (each) map extractId to the 6 channels.
+
+    data = {}
+
+    for i in range(len(time)):
+        currentHardwareTimestamp = hardwareTimestamp[i]
+        sensorId = extractId[i]
+        channel1 = accelerometerX[i]
+        channel2 = accelerometerY[i]
+        channel3 = accelerometerZ[i]
+        channel4 = gyroscopeX[i]
+        channel5 = gyroscopeY[i]
+        channel6 = gyroscopeZ[i]
+
+        channelList = [channel1, channel2, channel3, channel4, channel5, channel6]
+
+        timestampMap = data.get(currentHardwareTimestamp)
+
+        if timestampMap is None:
+            data[currentHardwareTimestamp] = {sensorId: channelList}
+        else:
+            timestampMap[sensorId] = channelList
+            data[currentHardwareTimestamp] = timestampMap
 
     plt.title(csv_file_path)
+    plt.ylabel('time')
+    plt.xlabel('measurement')
 
     plt.show()
