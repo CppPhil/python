@@ -4,11 +4,39 @@ import sys
 import pandas as pd
 
 
-def append_previous(the_list, index):
-    if len(the_list) >= index > 0:
-        the_list.append(the_list[index - 1])
+def sensor_to_string(sensorId):
+    right_arm_sensor_id = 769
+    belly_sensor_id = 770
+    chest_sensor_id = 771
+    left_arm_sensor_id = 772
+
+    if sensorId == right_arm_sensor_id:
+        return "right arm sensor"
+    elif sensorId == belly_sensor_id:
+        return "belly sensor"
+    elif sensorId == chest_sensor_id:
+        return "chest sensor"
+    elif sensorId == left_arm_sensor_id:
+        return "left arm sensor"
     else:
-        the_list.append(0)
+        return f"bogus sensor, id: {sensorId}"
+
+
+def channel_to_string(channel):
+    if channel == 1:
+        return "accelerometer X"
+    elif channel == 2:
+        return "accelerometer Y"
+    elif channel == 3:
+        return "accelerometer Z"
+    elif channel == 4:
+        return "gyroscope X"
+    elif channel == 5:
+        return "gyroscope Y"
+    elif channel == 6:
+        return "gyroscope Z"
+    else:
+        return f"bogus channel: {channel}"
 
 
 if __name__ == "__main__":
@@ -63,11 +91,6 @@ if __name__ == "__main__":
             gyroscopeY.append(float(row[gyroscopeYColumnIndex]))
             gyroscopeZ.append(float(row[gyroscopeZColumnIndex]))
 
-    rightArmSensorId = 769
-    bellySensorId = 770
-    chestSensorId = 771
-    leftArmSensorId = 772
-
     timeData = []
     channelData = []
 
@@ -94,6 +117,6 @@ if __name__ == "__main__":
 
     plt.plot('time', 'channel', data=df, color='skyblue')
     plt.title(csv_file_path)
-    plt.ylabel(f'channel{desired_channel} {desired_sensor}')  # TODO: Make the printing of this prettier
+    plt.ylabel(f'{channel_to_string(desired_channel)} {sensor_to_string(desired_sensor)}')
     plt.xlabel('time')
     plt.show()
