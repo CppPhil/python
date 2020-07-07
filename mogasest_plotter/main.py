@@ -88,6 +88,28 @@ if __name__ == "__main__":
             timestampMap[sensorId] = channelList
             data[currentHardwareTimestamp] = timestampMap
 
+    uniqueHardwareTimestamps = list(set(hardwareTimestamp))
+    channel1RightArmSensor = []
+    channel1BellySensor = []
+    channel1ChestSensor = []
+    channel1LeftArmSensor = []
+
+    for timestamp in uniqueHardwareTimestamps:
+        timestampMap = data.get(timestamp)
+        channel1RightArmSensor.append(timestampMap.get(rightArmSensorId)[0])
+        channel1BellySensor.append(timestampMap.get(bellySensorId)[0])
+        channel1ChestSensor.append(timestampMap.get(bellySensorId)[0])
+        channel1LeftArmSensor.append(timestampMap.get(leftArmSensorId)[0])
+
+    df = pd.DataFrame({'hardware_timestamp': uniqueHardwareTimestamps, 'channel1_right_arm': channel1RightArmSensor,
+                       'channel1_belly': channel1BellySensor, 'channel1_chest': channel1ChestSensor,
+                       'channel1_left_arm': channel1LeftArmSensor})
+
+    plt.plot('hardware_timestamp', 'channel1_right_arm', data=df, marker='o', markerfacecolor='blue', color='skyblue')
+    plt.plot('hardware_timestamp', 'channel1_belly', data=df, marker='', color='olive')
+    plt.plot('hardware_timestamp', 'channel1_chest', data=df, marker='', color='red', linestyle='dashed')
+    plt.plot('hardware_timestamp', 'channel1_left_arm', data=df, marker='x', color='orange')
+
     plt.title(csv_file_path)
     plt.ylabel('time')
     plt.xlabel('measurement')
