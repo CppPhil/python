@@ -3,6 +3,14 @@ import csv
 import sys
 import pandas as pd
 
+
+def append_previous(the_list, index):
+    if len(the_list) >= index > 0:
+        the_list.append(the_list[index - 1])
+    else:
+        the_list.append(0)
+
+
 if __name__ == "__main__":
     argc = len(sys.argv)
     expectedArgumentCount = 2
@@ -51,45 +59,10 @@ if __name__ == "__main__":
             gyroscopeY.append(float(row[gyroscopeYColumnIndex]))
             gyroscopeZ.append(float(row[gyroscopeZColumnIndex]))
 
-    # plt.plot(time, hardwareTimestamp, extractId, accelerometerX, accelerometerY, accelerometerZ, gyroscopeX,
-    # gyroscopeY, gyroscopeZ, marker='o')
-
-    # plt.plot(hardwareTimestamp, extractId, accelerometerX, marker='o')
-
     rightArmSensorId = 769
     bellySensorId = 770
     chestSensorId = 771
     leftArmSensorId = 772
-
-    #  df = pd.DataFrame({''})
-
-    # map than maps HWTimestamp to
-    #      maps that (each) map extractId to the 6 channels.
-
-    data = {}
-
-    for i in range(len(time)):
-        currentHardwareTimestamp = hardwareTimestamp[i]
-        sensorId = extractId[i]
-        channel1 = accelerometerX[i]
-        channel2 = accelerometerY[i]
-        channel3 = accelerometerZ[i]
-        channel4 = gyroscopeX[i]
-        channel5 = gyroscopeY[i]
-        channel6 = gyroscopeZ[i]
-
-        channelList = [channel1, channel2, channel3, channel4, channel5, channel6]
-
-        timestampMap = data.get(currentHardwareTimestamp)
-
-        if timestampMap is None:
-            data[currentHardwareTimestamp] = {sensorId: channelList}
-        else:
-            timestampMap[sensorId] = channelList
-            data[currentHardwareTimestamp] = timestampMap
-
-    # TODO: FUBAR'D FUBAR'D FUBAR'D FUBAR'D FUBAR'D FUBAR'D
-    # TODO: Hardware timestamp is not unique as it wraps around.
 
     # Have time axis <-
     #           sensor 1: If there's a channel1 value for the time: SHOW IT
@@ -100,30 +73,46 @@ if __name__ == "__main__":
     # List of the time
     # sensor1list: has REAL entry if there's something, otherwise previous entry
 
-    uniqueHardwareTimestamps = list(dict.fromkeys(hardwareTimestamp))
     channel1RightArmSensor = []
     channel1BellySensor = []
     channel1ChestSensor = []
     channel1LeftArmSensor = []
 
-    for timestamp in uniqueHardwareTimestamps:
-        timestampMap = data.get(timestamp)
-        channel1RightArmSensor.append(timestampMap.get(rightArmSensorId)[0])
-        channel1BellySensor.append(timestampMap.get(bellySensorId)[0])
-        channel1ChestSensor.append(timestampMap.get(bellySensorId)[0])
-        channel1LeftArmSensor.append(timestampMap.get(leftArmSensorId)[0])
+    for i in range(len(time)):
+        currentSensorId = extractId[i]
 
-    df = pd.DataFrame({'hardware_timestamp': uniqueHardwareTimestamps, 'channel1_right_arm': channel1RightArmSensor,
+        if currentSensorId == rightArmSensorId:
+            channel1RightArmSensor.append(accelerometerX[i])
+            append_previous(channel1BellySensor, i)
+            append_previous(channel1ChestSensor, i)
+            append_previous(channel1LeftArmSensor, i)
+        elif currentSensorId == bellySensorId:
+            append_previous(channel1RightArmSensor, i)
+            channel1BellySensor.append(accelerometerX[i])
+            append_previous(channel1ChestSensor, i)
+            append_previous(channel1LeftArmSensor, i)
+        elif currentSensorId == chestSensorId:
+            append_previous(channel1RightArmSensor, i)
+            append_previous(channel1BellySensor, i)
+            channel1ChestSensor.append(accelerometerX[i])
+            append_previous(channel1LeftArmSensor, i)
+        elif currentSensorId == leftArmSensorId:
+            append_previous(channel1RightArmSensor, i)
+            append_previous(channel1BellySensor, i)
+            append_previous(channel1ChestSensor, i)
+            channel1LeftArmSensor.append(accelerometerX[i])
+
+    df = pd.DataFrame({'time': time, 'channel1_right_arm': channel1RightArmSensor,
                        'channel1_belly': channel1BellySensor, 'channel1_chest': channel1ChestSensor,
                        'channel1_left_arm': channel1LeftArmSensor})
 
-    plt.plot('hardware_timestamp', 'channel1_right_arm', data=df, marker='o', markerfacecolor='blue', color='skyblue')
-    plt.plot('hardware_timestamp', 'channel1_belly', data=df, marker='', color='olive')
-    plt.plot('hardware_timestamp', 'channel1_chest', data=df, marker='', color='red', linestyle='dashed')
-    plt.plot('hardware_timestamp', 'channel1_left_arm', data=df, marker='x', color='orange')
+    plt.plot('time', 'channel1_right_arm', data=df, color='skyblue')
+    # plt.plot('time', 'channel1_belly', data=df, color='olive')
+    # plt.plot('time', 'channel1_chest', data=df, color='red')
+    # plt.plot('time', 'channel1_left_arm', data=df, color='orange')
 
     plt.title(csv_file_path)
-    plt.ylabel('time')
-    plt.xlabel('measurement')
+    plt.ylabel('channel1 right arm')
+    plt.xlabel('time')
 
     plt.show()
