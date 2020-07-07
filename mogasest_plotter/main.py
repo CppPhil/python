@@ -88,7 +88,10 @@ if __name__ == "__main__":
             timestampMap[sensorId] = channelList
             data[currentHardwareTimestamp] = timestampMap
 
-    uniqueHardwareTimestamps = list(set(hardwareTimestamp))
+    # TODO: FUBAR'D FUBAR'D FUBAR'D FUBAR'D FUBAR'D FUBAR'D
+    # TODO: Hardware timestamp is not unique as it wraps around.
+
+    uniqueHardwareTimestamps = list(dict.fromkeys(hardwareTimestamp))
     channel1RightArmSensor = []
     channel1BellySensor = []
     channel1ChestSensor = []
