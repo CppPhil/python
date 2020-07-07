@@ -1,3 +1,20 @@
+#!/usr/bin/env python3
+# -*- coding: utf8 -*-
+
+# Sensors
+# 769 = right arm
+# 770 = belly
+# 771 = chest
+# 772 = left arm
+
+# Channels
+#  1 = accelerometer X                                                                                       
+#  2 = accelerometer Y                                                                                       
+#  3 = accelerometer Z                                                                                       
+#  4 = gyroscope X                                                                                           
+#  5 = gyroscope Y                                                                                           
+#  6 = gyroscope Z   
+
 import argparse
 import csv
 
